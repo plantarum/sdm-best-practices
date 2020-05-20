@@ -32,12 +32,9 @@
 
 [[zotero://select/items/2_IA87W44S][@radosavljevic.anderson_2014]]
 
-*** TO-READ
-Pearson, R.G., Phillips, S.J., Loranty, M.M., Beck, P.S.A., Damoulas, T.,
-Knight, S.J. & Goetz, S.J. (2013) Shifts in Arctic vegetation and
-associated feedbacks under climate change. Nature Climate Change, 3,
-673–677.
+[[zotero://select/items/2_MW3BXWV2][@pearson.etal_2013]]
 
+*** TO-READ
 Boria, R. A. et al. 2014. Spatial filtering to reduce sampling bias can
 improve the performance of ecological niche models. – Ecol. Model. 275:
 73–77.  
@@ -78,12 +75,6 @@ of a species, as Lee-Yaw's approach does.
 [[zotero://select/items/2_IA87W44S][@radosavljevic.anderson_2014]] show that unfiltered/unthinned data produces
 elevated assessment of model performance, as a consequence of over-fitting
 to spatially auto-correlated data. So filtering works.
-
-They also evaluated cross-validation using geographical structuring and
-geographic masking of partitions. Geographic structuring introduces
-additional spatial bias, and should be avoided. However, geographic
-structuring with masking may substantially reduce overfitting, and yields
-more realistic models than random partitions. 
 
 See also Boria et al. 2014, Varela et al. 2014, Pearson et al. 2013 (unread)
 
@@ -273,6 +264,7 @@ different extents, even for identical models, so they can't be compared
 across projections without additional post-processing.
 
 ** Evaluation
+*** AUC
 AUC assesses the success of the model in correctly ranking a random
 background point and a random presence point; that is, it should predict
 the suitability of the presence point higher than the background point. It
@@ -300,6 +292,7 @@ reflects the degree to which the model is over-fit on the training data. In
 other words, the extent to which the model is fit to noise in the data, or
 environmental bias, if geographic masking is used in the k-fold partitions. 
 
+*** Thresholds
 [[zotero://select/items/2_IA87W44S][@radosavljevic.anderson_2014]] Threshold-dependent evaluation requires
 identifying a threshold in values predicted by the model to generate a
 binary suitable/unsuitable map. Setting the threshold to the lowest
@@ -323,6 +316,32 @@ observed values for the evaluation AUC (which assesses discriminatory
 ability). When more than one regularization multiplier fulfilled these
 criteria equally well, we chose the lowest one, to promote discriminatory
 ability (and hence, counter any tendency towards underfitting)."
+
+*** Cross-validation
+[[zotero://select/items/2_IA87W44S][@radosavljevic.anderson_2014]] evaluated cross-validation using random k-fold
+partitions, geographical structuring, and geographic masking of partitions.
+Random partitions suffer from preserving biases in the training data in the
+testing data. 
+
+Geographic structuring, which uses occurrences from a pre-defined
+geographic area (rather than a random sample) as the test set, introduces
+additional spatial bias, and should be avoided. However, geographic
+structuring combined with masking (which excludes both presences and
+background from the specified geographic region from the test set) may
+substantially reduce overfitting, and yields more realistic models than
+random partitions.
+
+Checkboard partitions offer a nice compromise - this is geographic
+structuring and masking on a fine scale, and so should reduce spatial
+correlation between training and testing data. A version was used by
+[[zotero://select/items/2_MW3BXWV2][@pearson.etal_2013]], without a lot of discussion. Functions to do
+checkerboard cross validation are provided by [[zotero://select/items/2_FLE8ZPYG][@muscarella.etal_2014]], but
+without a lot of discussion. The cited references suggest this might be
+intended more for species with limited occurrence data? Also, as
+implemented it looks like they only allow for 2-fold and 4-fold
+cross-validation. I'm not sure there's any reason not to use checkerboards
+to do 8- or 16- fold cross validation?
+
 
 ** TO DO
 - Clamping
