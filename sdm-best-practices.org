@@ -1,0 +1,330 @@
+* SDM Best Practices
+** Sources
+[[zotero://select/items/2_CE2STV75][Guisan, Antoine, Wilfried Thuiller, and Niklaus E. Zimmermann. Habitat Suitability and Distribution Models: With Applications in R. Cambridge University Press, 2017.]]
+
+
+[[zotero://select/items/2_53TI6XHV][Warren, Dan L., and Stephanie N. Seifert. “Ecological Niche Modeling in Maxent: The Importance of Model Complexity and the Performance of Model Selection Criteria.” Ecological Applications 21, no. 2 (2011): 335–42. https://doi.org/10.1890/10-1171.1.]]
+
+
+[[zotero://select/items/4_UX6B6MQL][Lee‐Yaw, Julie A., Marco Fracassetti, and Yvonne Willi. “Environmental Marginality and Geographic Range Limits: A Case Study with Arabidopsis Lyrata Ssp. Lyrata.” Ecography 41, no. 4 (2018): 622–34. https://doi.org/10.1111/ecog.02869.]]
+
+
+[[zotero://select/items/2_SXFZQ6QJ][Barve, Narayani, Vijay Barve, Alberto Jiménez-Valverde, Andrés Lira-Noriega, Sean P. Maher, A. Townsend Peterson, Jorge Soberón, and Fabricio Villalobos. “The Crucial Role of the Accessible Area in Ecological Niche Modeling and Species Distribution Modeling.” Ecological Modelling 222, no. 11 (June 10, 2011): 1810–19. https://doi.org/10.1016/j.ecolmodel.2011.02.011.]]
+
+
+[[zotero://select/items/2_8IHV4HUI][Soberón, Jorge M. “Niche and Area of Distribution Modeling: A Population Ecology Perspective.” Ecography 33, no. 1 (2010): 159–67. https://doi.org/10.1111/j.1600-0587.2009.06074.x.]]
+
+
+[[zotero://select/items/2_PWK3WXML][Hijmans, Robert J., Steven Phillips, John Leathwick, and Jane Elith. Dismo R Package (version 1.1-4), 2017. https://CRAN.R-project.org/package=dismo.
+]]
+
+[[zotero://select/items/2_M3GUXX43][Petitpierre, Blaise, Olivier Broennimann, Christoph Kueffer, Curtis Daehler, and Antoine Guisan. “Selecting Predictors to Maximize the Transferability of Species Distribution Models: Lessons from Cross-Continental Plant Invasions.” Global Ecology and Biogeography 26, no. 3 (2017): 275–87. https://doi.org/10.1111/geb.12530.]]
+
+
+[[zotero://select/items/2_SYYEUFSX][Merow, Cory, Matthew J. Smith, and John A. Silander. “A Practical Guide to MaxEnt for Modeling Species’ Distributions: What It Does, and Why Inputs and Settings Matter.” Ecography 36, no. 10 (2013): 1058–69. https://doi.org/10.1111/j.1600-0587.2013.07872.x.
+]]
+
+[[zotero://select/items/2_82RT6T6C][Warren, Dan L., N. Matzke, M. Cardillo, J. Baumgartner, L. Beaumont, N. Huron, M. Simões, Teresa Iglesias, and R. Dinnage. ENMTools R Package, 2019. https://doi.org/10.5281/zenodo.3268814.
+]]
+
+[[zotero://select/items/2_832DMT2G][Phillips, Steven J. “A Brief Tutorial on Maxent.,” 2017. http://biodiversityinformatics.amnh.org/open_source/maxent/.
+]]
+
+[[zotero://select/items/2_IA87W44S][@radosavljevic.anderson_2014]]
+
+*** TO-READ
+Pearson, R.G., Phillips, S.J., Loranty, M.M., Beck, P.S.A., Damoulas, T.,
+Knight, S.J. & Goetz, S.J. (2013) Shifts in Arctic vegetation and
+associated feedbacks under climate change. Nature Climate Change, 3,
+673–677.
+
+Boria, R. A. et al. 2014. Spatial filtering to reduce sampling bias can
+improve the performance of ecological niche models. – Ecol. Model. 275:
+73–77.  
+
+Varela, S. et al. 2014. Environmental filters reduce the effects of
+sampling bias and improve predictions of ecological niche models. –
+Ecography 37: 1084–1091.  
+
+** Sampling Bias
+Sampling bias in occurrence data is an issue because it means we can't be
+sure a species is detected under certain conditions because that's it's
+preferred habitat, or because those are the conditions in the locations we
+prefer to search.
+
+"The uniform sampling assumption does not require a uniformly random sample
+from geographic space, but instead that environmental conditions are
+sampled in proportion to their availability, regardless of their spatial
+pattern" (Merow et al. 2013).
+
+This problem can be addressed by thinning records (also called spatial
+filtering, [[zotero://select/items/2_IA87W44S][@radosavljevic.anderson_2014]]), such that multiple records from
+within the same area are represented by only one or a few of the total
+records. This is a bit crude, but should remove the worst biases, such as a
+particular field station getting preferentially sampled by recurring visits
+from scientists or students, or general biases towards sampling roadsides
+and popular trails.
+
+Lee-Yaw et al. 2018 developed their own method to thin species records,
+using kernel smoothing estimates to reduce the number of samples from a
+neighbourhood, and selecting which samples to keep via novel environments.
+I don't think this is widespread, and feels a bit like overkill.
+
+Subsampling based on raster grids is a simpler, more intuitive approach
+provided by Hijmans et al. 2017. It doesn't account for the possibility
+that local density may be an accurate reflection of the niche requirements
+of a species, as Lee-Yaw's approach does.
+
+[[zotero://select/items/2_IA87W44S][@radosavljevic.anderson_2014]] show that unfiltered/unthinned data produces
+elevated assessment of model performance, as a consequence of over-fitting
+to spatially auto-correlated data. So filtering works.
+
+They also evaluated cross-validation using geographical structuring and
+geographic masking of partitions. Geographic structuring introduces
+additional spatial bias, and should be avoided. However, geographic
+structuring with masking may substantially reduce overfitting, and yields
+more realistic models than random partitions. 
+
+See also Boria et al. 2014, Varela et al. 2014, Pearson et al. 2013 (unread)
+
+Merow et al. 2013 provide two more rigorous approaches, depending on
+whether or not data on search effort is available. When search effort is
+known, it can be used to construct a biased prior.
+
+When search effort is unknown, we can create a biased background sample to
+account for bias in presence data, via Target Group Sampling. Under TGS,
+records that are collected using the same surveys/methods as the focal
+species are form the background points. i.e., the set of all herbarium
+records in GBIF may be an appropriately biased background for any one of
+those plant species. This assumes that the target plant is
+collected/detected at the same rate as the reference set. It may be
+appropriate to subset the reference set to increase the likelihood of this
+being true: use only graminoids as biased background for sedges, or woody
+plants as background for a tree?
+
+** Study Extent
+Discussed extensively in Barve et al. 2011. They identified three general
+approaches to consider:
+
+1. Biotic regions (ecozones etc). A good compromise between biological
+   realism and tractability
+2. Niche-model reconstructions: back-project a niche model over the
+   appropriate time period (i.e., previous glacial maximum or interglacial)
+   to identify the area that the species could have occupied over an
+   extended period. Nice idea, but a real risk of circularity?
+3. Detailed simulations. Sounds great, but I think if we had enough data to
+   properly parameterize such a model, we wouldn't need to resort to sdms in
+   the first place.
+
+If you wanted to improve on biotic regions, things to consider in
+developing a more rigorous approach should include:
+
+1. Dispersal characteristics of the species
+2. Crude estimate of the niche (again, circularity?)
+3. Establish relevant time span
+4. Identify relevant environmental changes
+
+Soberon 2010 is often cited together with Barve et al. 2011, but the latter
+provides more explicit discussion of best practices for sdm model
+construction. I think the deference to Soberon is probably due to their
+creation of the BAM model (in earlier publications), which Barve's system
+is based on (Biotic, Abiotic, Movement).
+
+Merow et al. 2013 provide a shorter discussion, and emphasize matching the
+study extent to the biological question of interest. Prioritizing sites for
+protection within the range of a species should constrain the extent to the
+existing range of the species; evaluating invasion potential should use an
+extent large enough to encompass the areas of concern (i.e., global, or
+continental scale for novel invasives).
+
+** Variable Selection
+Variables == predictors, the spatial layers used for as the
+environmental/dependent variables in the model.
+
+Interesting discussion in [[zotero://select/items/2_CE2STV75][@guisan.etal_2017]] (section 6.4, page 102+):
+variables that are measured most accurately often/usually are only
+indirectly related to a species' niche; e.g., elevation, slope, aspect.
+Very precise and accurate spatial layers are available for these. 
+
+Variables with a direct relationship to a species niche are usually created
+through interpolation from sparse reference points (weather stations), and
+this involves unavoidable error propagation and imprecision.
+ 
+Over small extents, it may be preferable to use indirect variables, as they
+offer greater precision in quantifying the local environment. However, as
+extent increases, the relative value of direct variables increases. The
+indirect variables are likely not stationary on large scales - a species
+relationship to slope and elevation are likely different in southern US vs
+northern Canada, for instance. On the other hand, a species relationship to
+temperature, however coarsely it is mapped, is likely similar across its
+geographic range.
+
+Merow et al. 2013 identify two general approaches to selecting variables.
+The machine learning approach is based on the understanding that the
+Maxent algorithm will, by design, select the most useful variables and
+features, so we can include all reasonable variables.
+
+However, this probably only applies when the objective is to provide
+accurate predictions of occurrences in the same context in which the model
+is built. Efforts to understand the environmental constraints on that distribution,
+or projecting it to a new context, will be potentially confounded when the
+model includes correlated variables. 
+
+To minimize this problem, [[zotero://select/items/2_SYYEUFSX][@merow.etal_2013]] recommends taking a statistical
+approach (i.e., treating a Maxent model as a 'conventional' statistical
+model). In this case, they recommend prescreening variables to limit
+colinearity, and emphasize biologically relevant variables. This should
+produce more parsimonious and interpretable models.
+
+Pairwise correlations can be used to identify pairs or groups of variables
+that are highly correlated. ENMTools (Warren et al. 2019) provides several
+helper functions for this, including `raster.cor.matrix`,
+`raster.cor.plot`. I prefer using `hclust` based on `1 - abs(cor)` to
+visualize correlated groups.
+
+However, this won't address multicollinearity among three or more
+variables. Guisan et al. 2017 suggest using the function `usdm::vif`
+instead, which calculates variable inflation. They recommend keeping the
+vif values under 10, but different authors will use cutoffs from 5-20.
+
+Petitpierre et al. (2017) explicitly tested different approaches to model
+selection for use in projecting models in space and time. Their results
+support Merow's statistical approach: modelers should use a small number of
+'proximal' variables (i.e., variables known to be biologically relevant to
+the species in question), or the first few PCA axes of a larger set of
+environmental variables. PCA axes are orthogonal (i.e., not collinear) by
+construction, but interpretation may be tricky if they incorporate a large
+number of variables. 
+
+** Feature Selection
+Features == the statistical models used to fit the variables to the
+response variables (presences). i.e., linear, quadratic, product, hinge,
+threshold, categorical.
+
+Merow et al. 2013 recommend selecting features on biological grounds. They
+provide a short discussion, noting that the fundamental niche is likely
+quadratic for most variables over a large enough extent, but may be better
+approximated by a linear function if the study extent is truncated with
+respect to the species' tolerance for that variable (ala Whittaker).
+Interesting ideas, but not much to go on unless you actually do know a fair
+bit about your species.
+
+Warren and Seifert (2011) describe a process for selecting features to
+keep/include in the model (linear, quadratic, polynomial, hinge, threshold,
+categorical). It uses the AIC to identify the optimal combination. Easy and
+quick to do with the ENMEval package (note that many references cite
+ENMTools for these tests, but they've been moved to ENMEval nowadays).
+
+** Regularization
+Regularization is used to penalize complexity. Low values will produce
+models with many predictors and features, with 0 leading to all features
+and variables being included. This can lead to problems with over-fitting
+and interpretation. Higher regularization values will lead to 'smoother',
+and hopefully more general and transferable models. There will be a
+trade-off between over- and under-fitting. 
+
+The default values in Maxent are based on empirical tests on a large number
+of species. These are probably not unreasonable, but it's pretty standard
+to mention that they're a compromise, and we improved them for our the
+needs of our particular species and context by doing X (for various values
+of X).
+
+Warren and Seifert's approach (see previous) can be used here as well,
+testing a range of regularization (aka beta) values, and selecting the one
+that generates the lowest AIC. It may also be worth selecting the simplest
+model that is within a certain similarity of the 'best' model? That's more
+to explain to reviewers though.
+
+Warren and Seifert's simulations demonstrate that models with
+a similar number of parameters to the true model produce more accurate
+models, in terms of suitability, variable assessment, and ranking of
+habitat suitability, both for the training extent and for models projected
+in space/time. Furthermore, AIC and BIC are the most effective approaches
+to model tuning to achieve the correct number of parameters.
+
+[[zotero://select/items/2_IA87W44S][@radosavljevic.anderson_2014]] also consider the impact of the regularization
+parameter on over-fitting. They find that the default value often leads to
+over-fitting, especially when spatial auto-correlation is not accounted for
+in model fitting. They conclude that regularization should be set
+deliberately for a study, following the results of experiments exploring a
+range of potential values.
+
+Note that specifying the regularization is done via the `betamultiplier`
+argument, which applies to each of the different feature classes. That is,
+the actual regularization value will be set by Maxent automatically for
+each class, subject to the multiplier value specified by the user. We
+don't set the regularization values for each class directly (which is
+possible via the options `beta_lqp`, `beta_threshold` etc. (Phillips 2017),
+although [[zotero://select/items/2_IA87W44S][@radosavljevic.anderson_2014]] suggest experiments to explore this
+should be done. 
+
+** Output type
+Raw: values are Relative Occurrence Rate (ROR), which will sum to 1 over
+the extent of the study.
+
+Cumulative: the sum of all cells with <= to the raw value of the cell.
+Rescaled to range from 0-100.
+
+Logistic: Not sure what this actually means.
+
+Merow recommends sticking to Raw whenever possible, which means using the
+same species in the same extent. Note that the raw values will change for
+different extents, even for identical models, so they can't be compared
+across projections without additional post-processing.
+
+** Evaluation
+AUC assesses the success of the model in correctly ranking a random
+background point and a random presence point; that is, it should predict
+the suitability of the presence point higher than the background point. It
+is threshold-independent.
+
+[[zotero://select/items/2_QBUHDTB4][@lobo.etal_2008]] identified five problems with AUC:
+
+1) it ignores the predicted probability values and the goodness-of-fit of the model; 
+2) it summarises the test performance over regions of the ROC space in
+   which one would rarely operate;
+3) it weights omission and commission errors equally; 
+4) it does not give information about the spatial distribution of model
+   errors; and, most importantly,
+5) the total extent to which models are carried out highly influences the
+   rate of well-predicted absences and the AUC scores.
+ 
+Additionally, [[zotero://select/items/2_IA87W44S][@radosavljevic.anderson_2014]] point out that AUC doesn't
+assess over-fitting or goodness-of-fit; rather, it is a measure of
+discrimination capacity. 
+
+However, comparing the difference in AUC for the training and testing data
+does give an estimate of overfitting. If the model fit perfectly, without
+overfitting, the AUC should be identical. It won't be, and the difference
+reflects the degree to which the model is over-fit on the training data. In
+other words, the extent to which the model is fit to noise in the data, or
+environmental bias, if geographic masking is used in the k-fold partitions. 
+
+[[zotero://select/items/2_IA87W44S][@radosavljevic.anderson_2014]] Threshold-dependent evaluation requires
+identifying a threshold in values predicted by the model to generate a
+binary suitable/unsuitable map. Setting the threshold to the lowest
+predicted value for a presence location may produce undesireable results if
+the lowest values is associated with an observation from an extreme
+outlier. More robust is setting the threshold to a particular quantile
+(10%), to exclude weirdos from establishing what's suitable.
+
+Again, if the model is perfectly fit, the omission rate in the testing data
+should be the same as in the training data. That is, setting the threshold
+at 10% to create the binary suitability map, we expect the omission rate in
+the test data to be 10%. Higher omission in the testing data reflects
+over-fitting (noise and/or bias). 
+
+For presence-only data commission error is unknown/unknowable. Accordingly,
+[[zotero://select/items/2_IA87W44S][@radosavljevic.anderson_2014]] defined an optimal model as one that "(1)
+reduced omission rates to the lowest observed value (or near it) and
+minimized the difference between calibration and evaluation AUC [i.e.,
+minimized over-fitting]; and (2) still led to maximal or near maximal
+observed values for the evaluation AUC (which assesses discriminatory
+ability). When more than one regularization multiplier fulfilled these
+criteria equally well, we chose the lowest one, to promote discriminatory
+ability (and hence, counter any tendency towards underfitting)."
+
+** TO DO
+- Clamping
+- Ensembles
+- Boyce Index
