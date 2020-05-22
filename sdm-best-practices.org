@@ -34,6 +34,8 @@
 
 [[zotero://select/items/2_MW3BXWV2][@pearson.etal_2013]]
 
+[[zotero://select/items/2_FQRPCYPA][@aiello-lammens.etal_2015]]
+
 *** TO-READ
 Boria, R. A. et al. 2014. Spatial filtering to reduce sampling bias can
 improve the performance of ecological niche models. – Ecol. Model. 275:
@@ -70,7 +72,11 @@ I don't think this is widespread, and feels a bit like overkill.
 Subsampling based on raster grids is a simpler, more intuitive approach
 provided by Hijmans et al. 2017. It doesn't account for the possibility
 that local density may be an accurate reflection of the niche requirements
-of a species, as Lee-Yaw's approach does.
+of a species, as Lee-Yaw's approach does. 
+
+[[zotero://select/items/2_FQRPCYPA][@aiello-lammens.etal_2015]] provides an alternative approach based on
+imposing a minimum permissible nearest-neighbour distance, and then finding
+the set that retains the most samples through repeated random samples.
 
 [[zotero://select/items/2_IA87W44S][@radosavljevic.anderson_2014]] show that unfiltered/unthinned data produces
 elevated assessment of model performance, as a consequence of over-fitting
@@ -292,6 +298,13 @@ reflects the degree to which the model is over-fit on the training data. In
 other words, the extent to which the model is fit to noise in the data, or
 environmental bias, if geographic masking is used in the k-fold partitions. 
 
+*** Boyce
+[[zotero://select/items/2_7T74A7UV][@hirzel.etal_2006]] evaluated a variety of sdm evaluation measures; on data
+sets with more than 50 presences, most evaluators had > 0.70 correlation
+with each other. Which is a little reassuring I suppose? They used AUC on
+presence/absence data as the 'gold standard', and found that the continuous
+Boyce index (which uses presence-only data) performed best.
+
 *** Thresholds
 [[zotero://select/items/2_IA87W44S][@radosavljevic.anderson_2014]] Threshold-dependent evaluation requires
 identifying a threshold in values predicted by the model to generate a
@@ -331,7 +344,7 @@ background from the specified geographic region from the test set) may
 substantially reduce overfitting, and yields more realistic models than
 random partitions.
 
-Checkboard partitions offer a nice compromise - this is geographic
+Checkerboard partitions offer a nice compromise - this is geographic
 structuring and masking on a fine scale, and so should reduce spatial
 correlation between training and testing data. A version was used by
 [[zotero://select/items/2_MW3BXWV2][@pearson.etal_2013]], without a lot of discussion. Functions to do
@@ -340,8 +353,7 @@ without a lot of discussion. The cited references suggest this might be
 intended more for species with limited occurrence data? Also, as
 implemented it looks like they only allow for 2-fold and 4-fold
 cross-validation. I'm not sure there's any reason not to use checkerboards
-to do 8- or 16- fold cross validation?
-
+to do 9- or 16- fold cross validation?
 
 ** TO DO
 - Clamping
